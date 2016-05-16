@@ -93,225 +93,391 @@ Change the file path(change directories) in the BotTrust() method  which is usin
 #SOLUTION TO THE PROBLEM USING SIMULATION: (SOURCE CODE)
 
 import static java.lang.Math.abs;
+
 import static java.lang.Math.min;
+
 import static java.lang.Math.max;
 
  import java.io.FileInputStream;
+
  import java.io.FileNotFoundException;
+
  import java.io.FileOutputStream;
+
  import java.io.BufferedReader;
+
  import java.io.BufferedInputStream;
+
  import java.io.PrintStream;
+
 import java.text.CharacterIterator;
+
 import java.text.StringCharacterIterator;
+
 import java.util.ArrayList;
+
 import java.util.List;
+
  import java.util.Scanner;
+
 int  min_x=0;
+
 int min_y=0;
+
 int max_x=1560;
+
 int max_y=800;
+
 int grid_size=15;
+
 PVector orangeRobot;  //This is the ORANGE ROBOT
+
 PVector blueRobot;    //This is the BLUE ROBOT
+
  ArrayList<String> positionX= new ArrayList<String> ();
+
  //The following ArrayLists are to keep track of the buttons pressed
+
  ArrayList<PVector> OrangeButtonPressed= new ArrayList<PVector>(); //arraylist of button pressed by the orange robot, empty list intially for each case
+ 
  ArrayList<PVector> BlueButtonPressed= new ArrayList<PVector>();   //arraylist of button pressed by the blue robot, empty list initially for each case
+ 
  PFont f;//STEP 1 declare font
+ 
  int caseNum=0;  //This integer variable is to store the working case number
+ 
  int orangeCaseCheck=0;//this variable checks caseNum  for maintaining arraylist of button pressed by the orange robot for each caseNum 
+ 
  int blueCaseCheck=0;///this variable checks caseNum  for maintaining arraylist of button pressed by the blue robot for each caseNum 
+ 
  PVector zero1;
+ 
  PVector zero2;
+ 
  int time=0;
+ 
  boolean Running;//This variable is used to determine if to run the simulation or stop(pause)
 
 void settings()
+
 {
+
   size(max_x, max_y);
+
 }
+
 void setup(){
+
   f = createFont("Arial",16,true); // STEP 2 Create Font
+
   ellipseMode(CORNER);
+
   frameRate(4);
+
   orangeRobot=new PVector(30, 60);
+
   blueRobot= new PVector(30,120);
   
+
   positionX= botTrust();
+
   Running=true;
   
+
 zero1= new PVector(0,0);
+
 zero2= new PVector(15,0);
+
  OrangeButtonPressed.add(zero1);
+
  BlueButtonPressed.add(zero2);
  
 }
+
 void draw(){
+
   background(#ffffff);
+
   fill(#00FF00);
+
     rect( 30,60, 1515, grid_size);
+
      rect( 30,120, 1515, grid_size);
+
    for ( int x=min_x; x<=max_x; x+=grid_size ) {
+
    
     line( x,min_y,x,max_y );
+
   }
+  
   for ( int y=min_y; y<=max_y; y+=grid_size ) {
+  
     line( min_x,y,max_x,y );
+  
   }
  
  /** DRAWING FOR ORANGE ROBOT */
+ 
    drawRobotNButtons(orangeRobot, OrangeButtonPressed,#ffa500);
    
   /** DRAW FOR BLUE ROBOT */
+ 
    drawRobotNButtons(blueRobot, BlueButtonPressed,#0000ff);
  
    
    
    
    if(Running==true) {
+ 
    /**Function call to determine location based on the data read from the chart*/
+ 
    presentPositions();  //
+ 
    /** CALL THREADS _ACTORS to press the button by each of the Robot (use of MultipleThreads)*/
+
   Thread  orange = new Thread( new OrangeActor());
+
   Thread  blue   = new Thread( new BlueActor());
+
    orange.start();
+
    blue.start();
 
 
    
    }
+
    /** Data on the sketch*/
+
    textFont(f,24);  // STEP 3 Specify font to be used
+
    fill(#FFFF00);
+
    rect(600,550, 400,150);
+
   fill(0);                         //STEP 4 Specify font color 
+
   text( "Case#"+ (caseNum) + " Total Run Time: " + time ,600,600);   // STEP 5 Display Text
+
   text( "This time Orange at Button: "+(int)(orangeRobot.x/15-2),600,640);   
+
   text( "This time Blue at Button: "+(int)(blueRobot.x/15-2),600,680);  
+
    
 }
 
+
 /** Press any key to pause the simulation*/
+
 void keyPressed(){
+
   if (keyPressed==true){
+
     if(Running==true){
+
       Running=false;
+
     }
+
     else{
+
       Running=true;
+
     }
+
   }
+
 }
+
 
 
 /** This function is to test if the robots are moving */ 
+
 void NewMove(){
+
 if (orangeRobot.x<(max_x-15)){
+
   orangeRobot.x+=grid_size;
+
   orangeRobot.y=60;
+
 }
   if (blueRobot.x<(max_x-15)){
+
 blueRobot.x+=grid_size;
+
 blueRobot.y=120;
+
   }
+
 }
+
+
+
 
 
 /** This function collects the postions data for the robots from the data file and return a list with that information*/
+
 ArrayList<String> botTrust() {
+
   ArrayList<String> orangeBlueX= new ArrayList<String>();
+
     try{
+
      
       System.setIn( new FileInputStream("C:/Users/Kazi/Desktop/Bot_Trust/A-small-practice.in"));
+     
       System.setOut(new PrintStream(new FileOutputStream("C:/Users/Kazi/Desktop/Bot_Trust/A-small-practice.out")));
+     
       
       Scanner in = new Scanner(System.in);
+     
       int tests = in.nextInt(); in.nextLine();
+     
       for (int test=1; test<= tests; test++) {      
      
         int time = 0;
+     
         int posOrange = 1, posBlue = 1;
+     
         int timeOrange = 0, timeBlue = 0;
         
         int n = in.nextInt();
         
         orangeBlueX.add(Integer.toString(n));
+     
         orangeBlueX.add("O");
+     
         orangeBlueX.add("30");
+     
         orangeBlueX.add("0");
+     
         orangeBlueX.add("B");
+     
         orangeBlueX.add("30");
+     
          orangeBlueX.add("0");
+     
        
         for (int i=0; i<n; i++) {
           
          
           if ("O".equals(in.next())) {
              int button = in.nextInt();
+     
               int add =  max(1 - timeOrange, abs(button-posOrange) + 1 - timeBlue);
+     
              timeOrange += add;
+     
             time += add;
+     
              timeBlue = 0;
+     
             
              posOrange = button;
+     
             orangeBlueX.add( "O");
             
             int x1= grid_size*button+30;
+     
             orangeBlueX.add(Integer.toString(x1));
             
              orangeBlueX.add(Integer.toString(time));
              
-          } else {
+          } 
+          
+          else {
+          
              int button = in.nextInt();
+          
               int add =  max(1 - timeBlue, abs(button-posBlue) + 1 - timeOrange);
+          
              timeBlue += add;
+          
             time += add;
+          
             timeOrange = 0;
            
              posBlue = button;
+          
              orangeBlueX.add( "B");
+          
             int x2= grid_size*button+30;
+          
             orangeBlueX.add(Integer.toString(x2));
+          
              orangeBlueX.add(Integer.toString(time));
+          
           }     
+       
         }
         
+        
         System.out.println(String.format("Case #%d: %d", test, time));
+      
       }
       
     }
-    catch(IOException ioe){
+        catch(IOException ioe){
+    
     System.out.println("Error: " +ioe);
+    
     }
+  
   return orangeBlueX;
+
 }
 
 
 /** This functions determines the positions of the Robots based 
+
 on the data collected through the function call for( BotTrust() ) */
+
 int n=0;
+
 void presentPositions(){
+
 if(positionX.isEmpty()==false){
+
       if(n==0){
+
   caseNum++;
+
   n= Integer.parseInt(positionX.get(0))+2;
+
   positionX.remove(0);
+
       }
+
    if(positionX.get(0)=="O"){
+
      positionX.remove(0);
+
      orangeRobot.x=Integer.parseInt(positionX.get(0));
+
      positionX.remove(0);
+
       n--;
+
    }
+
    else if(positionX.get(0)=="B"){
+
      positionX.remove(0);
+
      blueRobot.x=Integer.parseInt(positionX.get(0));
+
      positionX.remove(0);
+
       n--;
+
    }
+
     time=Integer.parseInt(positionX.get(0));
+
           positionX.remove(0);
+
    }
   
    
@@ -321,9 +487,13 @@ if(positionX.isEmpty()==false){
 pressed by the agent passed in the parameter*/
 
  PVector ButtonClicked(PVector agent){
+
    if(agent.x==30){ return new PVector();} // this returns a null PVector because that is index and Robot does not press that button 
+
    PVector PressedButton= new PVector(agent.x, agent.y);
+
    return PressedButton;    // otherwise it return the PVector
+
  }
    
    
@@ -331,37 +501,59 @@ pressed by the agent passed in the parameter*/
 and the buttons pressed after each case iteration */
 
 void drawRobotNButtons(PVector agent, ArrayList<PVector> buttonPressed, color col){
+
   for (PVector e: buttonPressed){
+
      fill(255,0,0);
+
      rect( e.x, e.y, grid_size, grid_size );
+
    }
+
       fill(col);
+
    ellipse( agent.x, agent.y, grid_size, grid_size );
+
 }
 
 
 
 
 /** This Thread acts for the OrangeRobot*/
+
 public class OrangeActor extends Thread{
+
   @Override
+
   public void run(){
+
       
 //drawing the button pressed by the Orange Robot
+
    if((OrangeButtonPressed.size()-1)!=-1){
 
    if(orangeCaseCheck==caseNum && (ButtonClicked(orangeRobot)!=null)){
+
   OrangeButtonPressed.add(ButtonClicked(orangeRobot));
   
   }
-  else{
+
+  else
+ 
+  {
+ 
     OrangeButtonPressed.clear();
+ 
     OrangeButtonPressed.add(zero1);
+ 
     orangeCaseCheck=caseNum;
+ 
   }  
+ 
   }
  
 }
+
   }
   
   
@@ -369,23 +561,38 @@ public class OrangeActor extends Thread{
   
   
   /** This Thread acts for the blueRobot*/
+
 public class BlueActor extends Thread{
+
   @Override
+
   public void run(){
    
 
      //drawing the button pressed by the Blue Robot
+
   if((BlueButtonPressed.size()-1)!=-1){
 
     if(blueCaseCheck==caseNum){
+
   BlueButtonPressed.add(ButtonClicked(blueRobot));
 
   }
-  else{
+
+  else
+  {
+  
     BlueButtonPressed.clear();
+  
     BlueButtonPressed.add(zero2);
+  
     blueCaseCheck=caseNum;
+  
   }
+  
   }
-}}
+
+}
+
+}
   
