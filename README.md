@@ -1,4 +1,5 @@
 # OOP-PROJECT-2-BOT-TRUST-GCJ-PROBLEM-USING-MULTIPLE-THREADS
+#CHECK THE SIMULATION IMAGES GIVEN FOR CASE# 6,11,20
 CISC 3150 OBJECT ORIENTED PROGRAMMING 
 ##Project Requirement
  Project 2
@@ -70,12 +71,21 @@ Sample
 
 Input
 3
+
 4 O 2 B 1 B 2 O 4
+
 3 O 5 O 8 B 100
+
 2 B 2 B 1
+
+
+
 Output
+
 Case #1: 6
+
 Case #2: 100
+
 Case #3: 4                                      */
 
 
